@@ -363,6 +363,37 @@ def status(
     console.print(table)
 
 
+@app.command("rebuild-db")
+def rebuild_db(
+    config_path: Optional[Path] = typer.Option(None, "--config", "-c"),
+    include_dry_run: bool = typer.Option(
+        False,
+        "--include-dry-run",
+        help="Also index sidecars in the configured _DryRun folder.",
+    ),
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
+) -> None:
+    """Rebuild the optional SQLite index from existing sidecar JSON files."""
+    _setup_logging(verbose)
+    cfg = _load_config(config_path, dry_run=None)
+
+    import aktenfux.db as db  # noqa: PLC0415
+
+    result = db.rebuild_index(cfg, include_dry_run=include_dry_run)
+    console.print(f"[green]✓[/green] SQLite index rebuilt: {cfg.sqlite_path}")
+    console.print(f"  indexed: {result.indexed}")
+    console.print(f"  skipped missing sidecar: {result.skipped_missing_sidecar}")
+    console.print(f"  skipped duplicate sha256: {result.skipped_duplicate_sha256}")
+    console.print(f"  errors: {result.errors}")
+    if not cfg.use_sqlite_index:
+        console.print(
+            "[yellow]Note:[/yellow] use_sqlite_index is false; enable it in config "
+            "for future duplicate checks and status counts."
+        )
+    if result.errors:
+        raise typer.Exit(1)
+
+
 @app.command()
 def reprocess(
     doc_id: str = typer.Argument(..., help="Document ID to re-analyze."),

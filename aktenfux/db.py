@@ -1,11 +1,17 @@
 """Optional SQLite index for document status, history, and duplicate detection."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import sqlite3
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from aktenfux.schema import SidecarDocument
+from aktenfux.storage import read_sidecar, sha256_file
+
+if TYPE_CHECKING:
+    from aktenfux.config import AktenfuxConfig
 
 logger = logging.getLogger(__name__)
 
@@ -151,3 +157,88 @@ def update_status(
     )
     with _connect(db_path) as conn:
         conn.execute(sql, params)
+
+
+@dataclass
+class RebuildIndexResult:
+    """Summary of a SQLite index rebuild from sidecar JSON files."""
+
+    indexed: int = 0
+    skipped_missing_sidecar: int = 0
+    skipped_duplicate_sha256: int = 0
+    errors: int = 0
+
+
+def _iter_rebuild_roots(
+    config: "AktenfuxConfig",
+    *,
+    include_dry_run: bool = False,
+) -> list[tuple[Path, str]]:
+    roots = [
+        (config.review_path, "review"),
+        (config.archive_path, "approved"),
+        (config.split_path, "approved"),
+        (config.error_path, "error"),
+    ]
+    if include_dry_run:
+        roots.append((config.dry_run_path, "dry_run"))
+    return roots
+
+
+def _status_for_rebuild(sidecar: SidecarDocument, folder_status: str) -> str:
+    if folder_status == "error" and sidecar.status == "rejected":
+        return "rejected"
+    return folder_status
+
+
+def rebuild_index(
+    config: "AktenfuxConfig",
+    *,
+    include_dry_run: bool = False,
+) -> RebuildIndexResult:
+    """Rebuild the SQLite index from existing PDF sidecar JSON files.
+
+    The sidecar JSON remains the source of truth; this function derives DB rows
+    from sidecars found in review, archive, split, and error folders. Existing
+    rows are updated by document ID. If a different document ID already owns the
+    same SHA-256, the later document is skipped so the DB-level uniqueness
+    constraint is preserved.
+    """
+    initialize_db(config.sqlite_path)
+    result = RebuildIndexResult()
+
+    for root, folder_status in _iter_rebuild_roots(config, include_dry_run=include_dry_run):
+        if not root.exists():
+            continue
+        for pdf in sorted(root.rglob("*.pdf")):
+            sidecar = read_sidecar(pdf)
+            if sidecar is None:
+                result.skipped_missing_sidecar += 1
+                continue
+
+            try:
+                refreshed = sidecar.model_copy(
+                    update={
+                        "current_path": str(pdf),
+                        "sha256": sha256_file(pdf),
+                        "status": _status_for_rebuild(sidecar, folder_status),
+                    }
+                )
+
+                existing = find_by_sha256(config.sqlite_path, refreshed.sha256)
+                if existing is not None and existing["id"] != refreshed.id:
+                    logger.warning(
+                        "Skipping %s during index rebuild: sha256 already belongs to %s",
+                        pdf,
+                        existing["id"],
+                    )
+                    result.skipped_duplicate_sha256 += 1
+                    continue
+
+                upsert_document(config.sqlite_path, refreshed)
+                result.indexed += 1
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("Could not index %s: %s", pdf, exc)
+                result.errors += 1
+
+    return result

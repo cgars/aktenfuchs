@@ -141,6 +141,7 @@ Copy `config.example.yaml` to `config.yaml` (or run `afu init`) and adjust as ne
 | `afu reject <id>` | Move a document to `_Error` |
 | `afu reject --all` | Move all documents currently in `_Review` to `_Error` |
 | `afu status` | Show document counts per folder |
+| `afu rebuild-db` | Rebuild the optional SQLite index from existing sidecar JSON files in `_Review`, `Archive`, `_Split`, and `_Error` |
 | `afu reprocess <id>` | Re-analyze a document with the LLM |
 
 ---
@@ -162,7 +163,7 @@ Copy `config.example.yaml` to `config.yaml` (or run `afu init`) and adjust as ne
 ## 7. Architecture
 
 - **Sidecar JSON** is the source of truth per document (stored alongside the PDF).
-- **SQLite** is an optional index only – the tool works without it.
+- **SQLite** is an optional index only – the tool works without it. If you enable it later, run `afu rebuild-db` to repopulate it from existing sidecar JSON files, including already archived documents.
 - **Core logic is cross-platform** (Windows, macOS, Linux).
 - All paths use `pathlib` – no hard-coded OS-specific separators.
 - OS-specific setup scripts and installers are **intentionally out of scope** for v0.1.
