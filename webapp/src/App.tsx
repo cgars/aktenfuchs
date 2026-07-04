@@ -75,7 +75,7 @@ function App() {
       setZoom(1)
       setRotation(0)
     })()
-  }, [currentQueueItem?.id])
+  }, [currentQueueItem])
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
