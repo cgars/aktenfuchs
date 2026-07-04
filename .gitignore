@@ -33,3 +33,7 @@ Thumbs.db
 # Aktenfux runtime artefacts
 *.db
 *.db-journal
+
+# Node
+node_modules/
+webapp/node_modules/

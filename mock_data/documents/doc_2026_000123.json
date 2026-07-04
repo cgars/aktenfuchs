@@ -1,0 +1,92 @@
+{
+  "id": "doc_2026_000123",
+  "source_file": "scan_001.pdf",
+  "pdf_path": "mock_data/pdfs/scan_001.pdf",
+  "pages": [
+    1,
+    2,
+    3
+  ],
+  "status": "metadata_review",
+  "split_markers": [],
+  "description": {
+    "summary": "Brief der Stadt K\u00f6ln zur Grundsteuer.",
+    "markdown": "# Zusammenfassung\n\nGrundsteuerbescheid f\u00fcr 2024.",
+    "ocr_text": "Stadt K\u00f6ln\nGrundsteuer 2024\nBitte zahlen Sie bis zum 31.03.2024 ...",
+    "notes": "",
+    "tasks": [
+      {
+        "label": "Frist pr\u00fcfen",
+        "done": false
+      },
+      {
+        "label": "Betrag \u00fcberweisen",
+        "done": false
+      }
+    ]
+  },
+  "metadata": {
+    "document_type": {
+      "value": "Bescheid",
+      "state": "suggested",
+      "confidence": 0.82
+    },
+    "date": {
+      "value": "2024-03-12",
+      "state": "suggested",
+      "confidence": 0.91
+    },
+    "sender": {
+      "value": "Stadt K\u00f6ln",
+      "state": "confirmed",
+      "confidence": 0.74
+    },
+    "recipient": {
+      "value": "",
+      "state": "empty",
+      "confidence": null
+    },
+    "subject": {
+      "value": "Grundsteuer",
+      "state": "suggested",
+      "confidence": 0.7
+    },
+    "reference": {
+      "value": "",
+      "state": "empty",
+      "confidence": null
+    },
+    "amount": {
+      "value": "470.12",
+      "state": "suggested",
+      "confidence": 0.79
+    },
+    "deadline": {
+      "value": "2024-03-31",
+      "state": "suggested",
+      "confidence": 0.88
+    },
+    "location": {
+      "value": "K\u00f6ln",
+      "state": "suggested",
+      "confidence": 0.67
+    },
+    "persons": [
+      "Max Mustermann"
+    ],
+    "organizations": [
+      "Stadt K\u00f6ln"
+    ],
+    "tags": [
+      "steuer",
+      "wohnen"
+    ],
+    "confidentiality": "private",
+    "suggested_archive_path": "Steuer/Grundsteuer/2024",
+    "status": "metadata_review"
+  },
+  "review": {
+    "reviewed": false,
+    "reviewed_at": null
+  }
+}

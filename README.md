@@ -142,10 +142,40 @@ Copy `config.example.yaml` to `config.yaml` (or run `afu init`) and adjust as ne
 | `afu reject --all` | Move all documents currently in `_Review` to `_Error` |
 | `afu status` | Show document counts per folder |
 | `afu reprocess <id>` | Re-analyze a document with the LLM |
+| `afu gui` | Run the local FastAPI backend for the review GUI MVP |
 
 ---
 
-## 6. Security
+## 6. GUI MVP (local web app)
+
+Aktenfux now includes an MVP review GUI with a FastAPI backend and a React + TypeScript frontend.
+
+### Start backend API
+
+```bash
+afu gui --host 127.0.0.1 --port 8000
+```
+
+### Start frontend (second terminal)
+
+```bash
+cd webapp
+npm install
+npm run dev
+```
+
+Open <http://localhost:5173>. The frontend proxies API calls to the FastAPI backend.
+
+Mock review documents are stored in:
+
+- `mock_data/documents/*.json`
+- `mock_data/pdfs/*.pdf`
+
+You can override the document source with `AKTENFUX_GUI_DATA_DIR`.
+
+---
+
+## 7. Security
 
 - Aktenfux works **entirely offline**.
 - Documents are **never sent to external APIs**.
@@ -159,7 +189,7 @@ Copy `config.example.yaml` to `config.yaml` (or run `afu init`) and adjust as ne
 
 ---
 
-## 7. Architecture
+## 8. Architecture
 
 - **Sidecar JSON** is the source of truth per document (stored alongside the PDF).
 - **SQLite** is an optional index only – the tool works without it.
@@ -182,10 +212,11 @@ Copy `config.example.yaml` to `config.yaml` (or run `afu init`) and adjust as ne
 | `review.py` | List and display `_Review` documents |
 | `main.py` | Core processing pipeline |
 | `cli.py` | Typer-based CLI (`afu`) |
+| `gui_api.py`, `gui_storage.py`, `gui_models.py` | FastAPI review backend and JSON sidecar workbench models |
 
 ---
 
-## 8. Development
+## 9. Development
 
 ```bash
 # Install with dev extras
@@ -200,7 +231,7 @@ pytest --cov=aktenfux --cov-report=term-missing
 
 ---
 
-## 9. Supported Models
+## 10. Supported Models
 
 | Model | Size | Notes |
 |-------|------|-------|
