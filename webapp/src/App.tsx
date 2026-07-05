@@ -21,19 +21,15 @@ const STATUS_OPTIONS = [
 ] as const
 
 const DOCUMENT_TYPE_OPTIONS = [
-  'Brief',
-  'Bescheid',
-  'Rechnung',
-  'Vertrag',
-  'Bank',
-  'Versicherung',
-  'Steuer',
-  'Gesundheit',
-  'Wohnen',
-  'Arbeit',
-  'Garantie',
-  'Anleitung',
-  'Sonstiges',
+  'Invoice',
+  'Contract',
+  'Notice',
+  'Policy',
+  'BankStatement',
+  'Letter',
+  'Receipt',
+  'Manual',
+  'Other',
 ]
 
 function App() {

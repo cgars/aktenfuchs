@@ -1,0 +1,43 @@
+{
+  "id": "doc_2026_000124",
+  "original_path": "scan_002.pdf",
+  "current_path": "mock_data/_Review/scan_002.pdf",
+  "sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+  "document_date": "2024-02-10",
+  "correspondent": "Versicherung AG",
+  "document_type": "Policy",
+  "category": "Insurance",
+  "topic": "Vertragsänderung",
+  "tags": ["versicherung"],
+  "summary_short": "Versicherungsschreiben mit Vertragsänderung und Rechnung.",
+  "summary": "Versicherungsschreiben der Versicherung AG mit zwei Abschnitten: Vertragsänderung und Rechnung.",
+  "key_points": ["Vertragsänderung", "Rechnung enthalten"],
+  "action_required": false,
+  "action_summary": null,
+  "deadline": null,
+  "amounts": [{"label": "Prämie", "amount": 109.99, "currency": "EUR"}],
+  "entities": {
+    "people": ["Erika Muster"],
+    "organizations": ["Versicherung AG"],
+    "addresses": [],
+    "contract_numbers": ["VS-88773"],
+    "invoice_numbers": [],
+    "customer_numbers": []
+  },
+  "suggested_folder": "Insurance/Policen",
+  "suggested_filename": "2024-02-10_Policy_Vertragsaenderung.pdf",
+  "confidence": 0.89,
+  "document_integrity": {
+    "possible_multi_document_scan": true,
+    "suspected_document_count": 2,
+    "confidence": 0.75,
+    "reason": "Document appears to contain two logical sections.",
+    "recommended_action": "run_split_detection"
+  },
+  "model": "mock",
+  "processed_at": "2024-02-10T14:30:00",
+  "status": "review",
+  "warnings": [],
+  "approved_at": null,
+  "error_message": null
+}

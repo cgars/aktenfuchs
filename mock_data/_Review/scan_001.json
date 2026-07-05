@@ -1,0 +1,59 @@
+{
+  "id": "doc_2026_000123",
+  "original_path": "scan_001.pdf",
+  "current_path": "mock_data/_Review/scan_001.pdf",
+  "sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+  "document_date": "2024-03-12",
+  "correspondent": "Stadt Köln",
+  "document_type": "Notice",
+  "category": "Taxes",
+  "topic": "Grundsteuer",
+  "tags": [
+    "steuer",
+    "wohnen"
+  ],
+  "summary_short": "Brief der Stadt Köln zur Grundsteuer 2024. Bitte zahlen Sie bis zum 31.03.2024.",
+  "summary": "Brief der Stadt Köln zur Grundsteuer 2024. Bitte zahlen Sie bis zum 31.03.2024.",
+  "key_points": [
+    "Grundsteuerbescheid für 2024",
+    "Frist: 31.03.2024"
+  ],
+  "action_required": true,
+  "action_summary": "Betrag überweisen bis 31.03.2024",
+  "deadline": "2024-03-31",
+  "amounts": [
+    {
+      "label": "Grundsteuer",
+      "amount": 470.12,
+      "currency": "EUR"
+    }
+  ],
+  "entities": {
+    "people": [
+      "Max Mustermann"
+    ],
+    "organizations": [
+      "Stadt Köln"
+    ],
+    "addresses": [],
+    "contract_numbers": [],
+    "invoice_numbers": [],
+    "customer_numbers": []
+  },
+  "suggested_folder": "Taxes/Grundsteuer",
+  "suggested_filename": "2024-03-12_Notice_Grundsteuer.pdf",
+  "confidence": 0.82,
+  "document_integrity": {
+    "possible_multi_document_scan": false,
+    "suspected_document_count": 1,
+    "confidence": 0.95,
+    "reason": "Single document scan.",
+    "recommended_action": "none"
+  },
+  "model": "mock",
+  "processed_at": "2024-03-12T10:00:00",
+  "status": "review",
+  "warnings": [],
+  "approved_at": null,
+  "error_message": null
+}
