@@ -59,10 +59,6 @@ function App() {
     void (async () => {
       const docs = await listDocuments()
       setQueue(docs)
-      if (docs.length > 0) {
-        const full = await getDocument(docs[0].id)
-        setDoc(full)
-      }
     })()
   }, [])
 
