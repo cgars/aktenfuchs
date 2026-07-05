@@ -10,17 +10,17 @@
   "status": "metadata_review",
   "split_markers": [],
   "description": {
-    "summary": "Brief der Stadt K\u00f6ln zur Grundsteuer.",
-    "markdown": "# Zusammenfassung\n\nGrundsteuerbescheid f\u00fcr 2024.",
-    "ocr_text": "Stadt K\u00f6ln\nGrundsteuer 2024\nBitte zahlen Sie bis zum 31.03.2024 ...",
+    "summary": "Brief der Stadt Köln zur Grundsteuer.",
+    "markdown": "# Zusammenfassung\n\nGrundsteuerbescheid für 2024.",
+    "ocr_text": "Stadt Köln\nGrundsteuer 2024\nBitte zahlen Sie bis zum 31.03.2024 ...",
     "notes": "",
     "tasks": [
       {
-        "label": "Frist pr\u00fcfen",
+        "label": "Frist prüfen",
         "done": false
       },
       {
-        "label": "Betrag \u00fcberweisen",
+        "label": "Betrag überweisen",
         "done": false
       }
     ]
@@ -37,7 +37,7 @@
       "confidence": 0.91
     },
     "sender": {
-      "value": "Stadt K\u00f6ln",
+      "value": "Stadt Köln",
       "state": "confirmed",
       "confidence": 0.74
     },
@@ -67,7 +67,7 @@
       "confidence": 0.88
     },
     "location": {
-      "value": "K\u00f6ln",
+      "value": "Köln",
       "state": "suggested",
       "confidence": 0.67
     },
@@ -75,7 +75,7 @@
       "Max Mustermann"
     ],
     "organizations": [
-      "Stadt K\u00f6ln"
+      "Stadt Köln"
     ],
     "tags": [
       "steuer",

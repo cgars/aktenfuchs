@@ -10,9 +10,9 @@ from aktenfux.gui_models import DocumentQueueItem, ReviewDocument
 
 
 class GuiDocumentStore:
-    def __init__(self, data_dir: Path, repository_root: Path) -> None:
+    def __init__(self, data_dir: Path, base_dir: Path) -> None:
         self.data_dir = data_dir
-        self.repository_root = repository_root
+        self.base_dir = base_dir
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
     def _document_file(self, doc_id: str) -> Path:
@@ -54,12 +54,10 @@ class GuiDocumentStore:
 
     def resolve_pdf_path(self, doc: ReviewDocument) -> Path:
         raw_path = Path(doc.pdf_path)
-        candidate = raw_path if raw_path.is_absolute() else self.repository_root / raw_path
+        candidate = raw_path if raw_path.is_absolute() else self.base_dir / raw_path
         resolved = candidate.resolve()
         if not resolved.exists():
             raise HTTPException(status_code=404, detail=f"PDF not found for document '{doc.id}'")
         return resolved
 
 
-def default_data_dir() -> Path:
-    return Path(__file__).resolve().parents[1] / "mock_data" / "documents"

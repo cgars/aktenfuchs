@@ -1,18 +1,25 @@
 """FastAPI backend for the Aktenfux review GUI MVP."""
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
+from aktenfux.config import load_config
 from aktenfux.gui_models import DOCUMENT_TYPE_OPTIONS, ReviewDocument
-from aktenfux.gui_storage import GuiDocumentStore, default_data_dir
+from aktenfux.gui_storage import GuiDocumentStore
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = Path(os.getenv("AKTENFUX_GUI_DATA_DIR", default_data_dir()))
+_PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+
+try:
+    _config = load_config()
+    _data_dir = _config.base_dir
+    _base_dir = _config.base_dir
+except FileNotFoundError:
+    _data_dir = _PACKAGE_ROOT / "mock_data" / "documents"
+    _base_dir = _PACKAGE_ROOT
 
 app = FastAPI(title="Aktenfux GUI API", version="0.1.0")
 app.add_middleware(
@@ -23,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-store = GuiDocumentStore(DATA_DIR, REPOSITORY_ROOT)
+store = GuiDocumentStore(_data_dir, _base_dir)
 
 # TODO hooks for future pipeline integration:
 # - OCR pipeline
