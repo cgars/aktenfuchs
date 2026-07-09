@@ -67,6 +67,11 @@ def mark_needs_split_review(doc_id: str):
     return store.mark_needs_split_review(doc_id)
 
 
+@app.post("/api/documents/{doc_id}/split")
+def split_document(doc_id: str):
+    return store.split_document(doc_id)
+
+
 @app.post("/api/documents/{doc_id}/rerun-analysis")
 def rerun_analysis(doc_id: str):
     store.get_document(doc_id)  # raises 404 if not found

@@ -37,6 +37,10 @@ export function markNeedsSplitReview(id: string) {
   return request<ReviewDocument>(`/documents/${id}/mark-needs-split-review`, { method: 'POST' })
 }
 
+export function splitDocument(id: string) {
+  return request<{ status: string; message: string; created_files: string[] }>(`/documents/${id}/split`, { method: 'POST' })
+}
+
 export function rerunAnalysis(id: string) {
   return request<{ status: string; message: string }>(`/documents/${id}/rerun-analysis`, { method: 'POST' })
 }

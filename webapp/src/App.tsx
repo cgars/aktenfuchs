@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
-import { approveDocument, getDocument, getPdfUrl, listDocuments, markNeedsSplitReview, rerunAnalysis, saveDocument } from './api'
+import { approveDocument, getDocument, getPdfUrl, listDocuments, markNeedsSplitReview, rerunAnalysis, saveDocument, splitDocument } from './api'
 import type { MetadataValue, QueueItem, ReviewDocument } from './types'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
@@ -249,6 +249,22 @@ function App() {
     setMessage(result.message)
   }
 
+  const handlePerformSplit = async () => {
+    if (!doc) return
+    if (!doc.split_markers.length) {
+      setMessage('No split markers set — use "Set split marker" (T) to mark pages first')
+      return
+    }
+    const result = await splitDocument(doc.id)
+    setMessage(result.message)
+    if (result.status === 'ok') {
+      // The document is no longer in _Review; refresh the queue and advance.
+      const updated = await listDocuments()
+      setQueue(updated)
+      setIndex(0)
+    }
+  }
+
   const toggleSplitMarker = () => {
     if (!doc) return
     const existing = new Set(doc.split_markers)
@@ -281,6 +297,7 @@ function App() {
         <button onClick={() => void handleSaveAndNext()}>Save and next</button>
         <button onClick={() => void handleApprove()}>Mark as approved</button>
         <button onClick={() => void handleNeedsSplitReview()}>Mark as needs split review</button>
+        <button onClick={() => void handlePerformSplit()} disabled={!doc.split_markers.length}>Perform split</button>
         <button onClick={() => void handleRerunAnalysis()}>Re-run analysis</button>
         <button onClick={() => goToDocument(index + 1)} disabled={index >= queue.length - 1}>Next document</button>
         <span className="status">{doc.id} · {doc.status} · {message}</span>
@@ -313,7 +330,7 @@ function App() {
             <button onClick={() => setZoom((value) => Math.min(value + 0.1, 3))}>Zoom +</button>
             <button onClick={() => setZoom((value) => Math.max(value - 0.1, 0.5))}>Zoom -</button>
             <button onClick={() => setRotation((value) => (value + 90) % 360)}>Rotate</button>
-            <button onClick={toggleSplitMarker}>Split before this page</button>
+            <button onClick={toggleSplitMarker}>Set split marker</button>
           </div>
           <p className="meta-line">
             Page {page} / {pageCount} · Zoom {zoom.toFixed(1)}x · Rotation {rotation}°
@@ -456,7 +473,7 @@ function App() {
               <li>Ctrl+1/2/3 focus panel</li>
               <li>ArrowLeft/ArrowRight previous/next document</li>
               <li>PageUp/PageDown previous/next page</li>
-              <li>+/- zoom · R rotate · T split marker</li>
+              <li>+/- zoom · R rotate · T set split marker</li>
               <li>E summary · O OCR · N notes · M metadata panel</li>
               <li>Esc close help</li>
             </ul>

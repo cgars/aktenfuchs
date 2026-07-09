@@ -15,6 +15,7 @@ _DEFAULT_CONFIG: dict[str, Any] = {
     "error_dir": "_Error",
     "archive_dir": "Archive",
     "split_dir": "_Split",
+    "splitted_docs_dir": "_SplittedDocs",
     "dry_run_dir": "_DryRun",
     "ollama_url": "http://localhost:11434",
     "ollama_model": "qwen3:8b",
@@ -61,6 +62,7 @@ class AktenfuxConfig:
         self.error_dir: str = merged["error_dir"]
         self.archive_dir: str = merged["archive_dir"]
         self.split_dir: str = merged["split_dir"]
+        self.splitted_docs_dir: str = merged["splitted_docs_dir"]
         self.dry_run_dir: str = merged["dry_run_dir"]
 
         self.ollama_url: str = merged["ollama_url"]
@@ -113,6 +115,10 @@ class AktenfuxConfig:
         return self.base_dir / self.split_dir
 
     @property
+    def splitted_docs_path(self) -> Path:
+        return self.base_dir / self.splitted_docs_dir
+
+    @property
     def dry_run_path(self) -> Path:
         return self.base_dir / self.dry_run_dir
 
@@ -124,6 +130,7 @@ class AktenfuxConfig:
             self.error_path,
             self.archive_path,
             self.split_path,
+            self.splitted_docs_path,
             self.dry_run_path,
         ]
 

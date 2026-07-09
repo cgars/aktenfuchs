@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -389,3 +390,74 @@ def reprocess_document(doc_id: str, config: AktenfuxConfig) -> None:
     pdf_path, _old_sidecar = result
     logger.info("Reprocessing %s …", pdf_path.name)
     _process_single(pdf_path, config)
+
+
+def split_document(doc_id: str, split_markers: list[int], config: AktenfuxConfig) -> list[str]:
+    """Split a document from _Review at the given page markers.
+
+    Each page range is written as a new PDF into ``_Inbox`` for reprocessing.
+    The original PDF, its sidecar, and GUI overlay are moved to ``_SplittedDocs``.
+
+    *split_markers* are 1-based page numbers at which a new segment begins
+    (page 1 is never a valid marker; a marker at page N means pages N…end form
+    a new document).  For example, markers=[4, 7] on a 10-page PDF produces:
+    pages 1–3, pages 4–6, pages 7–10.
+
+    Returns the list of file names created in ``_Inbox``.
+    """
+    import pypdf  # noqa: PLC0415
+
+    from aktenfux.review import find_document_by_id  # noqa: PLC0415
+
+    result = find_document_by_id(config.review_path, doc_id)
+    if result is None:
+        raise FileNotFoundError(f"Document '{doc_id}' not found in _Review.")
+
+    pdf_path, sidecar = result
+
+    markers = sorted(set(m for m in split_markers if m > 1))
+    if not markers:
+        raise ValueError("No valid split markers (markers must be page numbers > 1).")
+
+    config.inbox_path.mkdir(parents=True, exist_ok=True)
+    created: list[str] = []
+
+    with pypdf.PdfReader(str(pdf_path)) as reader:
+        total_pages = len(reader.pages)
+        boundaries = [0] + [m - 1 for m in markers if m - 1 < total_pages] + [total_pages]
+        segments = [(boundaries[i], boundaries[i + 1]) for i in range(len(boundaries) - 1)]
+        segments = [(s, e) for s, e in segments if e > s]
+
+        stem = pdf_path.stem
+        for part_index, (start, end) in enumerate(segments):
+            writer = pypdf.PdfWriter()
+            for page_num in range(start, end):
+                writer.add_page(reader.pages[page_num])
+            part_name = f"{stem}_part{part_index + 1:02d}.pdf"
+            dest = resolve_collision(config.inbox_path / part_name)
+            with dest.open("wb") as fh:
+                writer.write(fh)
+            logger.info("Split: wrote pages %d–%d to %s", start + 1, end, dest.name)
+            created.append(dest.name)
+
+    # Move original PDF + sidecar to _SplittedDocs.
+    config.splitted_docs_path.mkdir(parents=True, exist_ok=True)
+    dest_pdf = resolve_collision(config.splitted_docs_path / pdf_path.name)
+    move_file_with_sidecar(
+        pdf_path,
+        dest_pdf,
+        base_dir=config.base_dir,
+        dry_run=False,
+        move_markdown=config.write_markdown_summary,
+    )
+    logger.info("Moved original %s → _SplittedDocs/%s", pdf_path.name, dest_pdf.name)
+
+    # Move the GUI overlay (.gui.json) alongside the original if it exists.
+    _GUI_OVERLAY_SUFFIX = ".gui.json"
+    overlay_src = pdf_path.parent / (pdf_path.stem + _GUI_OVERLAY_SUFFIX)
+    if overlay_src.exists():
+        overlay_dest = dest_pdf.parent / (dest_pdf.stem + _GUI_OVERLAY_SUFFIX)
+        shutil.move(str(overlay_src), str(overlay_dest))
+        logger.debug("Moved GUI overlay %s → %s", overlay_src.name, overlay_dest.name)
+
+    return created

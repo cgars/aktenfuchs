@@ -179,6 +179,40 @@ class GuiDocumentStore:
         _write_overlay(pdf_path, overlay)
         return self.get_document(doc_id)
 
+    def split_document(self, doc_id: str) -> dict:
+        """Split the document at its saved split markers.
+
+        Splits are written to *_Inbox* as individual PDFs; the original
+        PDF, sidecar, and GUI overlay are moved to *_SplittedDocs*.
+        Returns a status dict with the names of the files created in Inbox.
+        In mock/test mode (no config) a descriptive no-op response is returned.
+        """
+        pdf_path, _ = self._require(doc_id)
+        overlay = _read_overlay(pdf_path)
+        markers = list(overlay.split_markers)
+
+        if not markers:
+            raise HTTPException(
+                status_code=400,
+                detail="No split markers set. Use 'Set split marker' (T) to mark pages first.",
+            )
+
+        if self.config is None:
+            return {
+                "status": "not_implemented",
+                "message": "Split pipeline not available in test mode (no config.yaml found).",
+                "created_files": [],
+            }
+
+        from aktenfux.main import split_document as _pipeline_split  # noqa: PLC0415
+
+        created = _pipeline_split(doc_id, markers, self.config)
+        return {
+            "status": "ok",
+            "message": f"Document split into {len(created)} part(s) and moved to Inbox.",
+            "created_files": created,
+        }
+
     def resolve_pdf_path(self, doc: ReviewDocument) -> Path:
         raw_path = Path(doc.pdf_path)
         candidate = raw_path if raw_path.is_absolute() else self.base_dir / raw_path
