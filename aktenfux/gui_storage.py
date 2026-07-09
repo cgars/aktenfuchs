@@ -24,9 +24,9 @@ from aktenfux.gui_models import (
 )
 from aktenfux.review import find_document_by_id
 from aktenfux.schema import DESCRIPTION_SHORT_MAX_CHARS, SidecarDocument
-from aktenfux.storage import read_sidecar, write_sidecar
+from aktenfux.storage import read_sidecar, write_sidecar, _GUI_OVERLAY_SUFFIX
 
-_OVERLAY_SUFFIX = ".gui.json"
+_OVERLAY_SUFFIX = _GUI_OVERLAY_SUFFIX
 
 
 def _overlay_path_for(pdf_path: Path) -> Path:
@@ -198,11 +198,10 @@ class GuiDocumentStore:
             )
 
         if self.config is None:
-            return {
-                "status": "not_implemented",
-                "message": "Split pipeline not available in test mode (no config.yaml found).",
-                "created_files": [],
-            }
+            raise HTTPException(
+                status_code=501,
+                detail="Split pipeline not available in test mode (no config.yaml found).",
+            )
 
         from aktenfux.main import split_document as _pipeline_split  # noqa: PLC0415
 

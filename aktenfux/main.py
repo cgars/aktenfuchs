@@ -14,6 +14,7 @@ from aktenfux.pdf_metadata import write_pdf_metadata
 from aktenfux.pdf_text import extract_text, has_usable_text, is_ignored_file, truncate_text
 from aktenfux.schema import SidecarDocument
 from aktenfux.storage import (
+    _GUI_OVERLAY_SUFFIX,
     assert_within_base,
     move_file_with_sidecar,
     read_sidecar,
@@ -415,8 +416,10 @@ def split_document(doc_id: str, split_markers: list[int], config: AktenfuxConfig
 
     pdf_path, sidecar = result
 
-    markers = sorted(set(m for m in split_markers if m > 1))
-    if not markers:
+    # Validate and sort markers; discard page-1 (no-op) and out-of-range values
+    # after we know the page count.
+    raw_markers = sorted(set(m for m in split_markers if m > 1))
+    if not raw_markers:
         raise ValueError("No valid split markers (markers must be page numbers > 1).")
 
     config.inbox_path.mkdir(parents=True, exist_ok=True)
@@ -424,7 +427,13 @@ def split_document(doc_id: str, split_markers: list[int], config: AktenfuxConfig
 
     with pypdf.PdfReader(str(pdf_path)) as reader:
         total_pages = len(reader.pages)
-        boundaries = [0] + [m - 1 for m in markers if m - 1 < total_pages] + [total_pages]
+        markers = [m for m in raw_markers if m <= total_pages]
+        if not markers:
+            raise ValueError(
+                f"All split markers exceed the document page count ({total_pages})."
+            )
+
+        boundaries = [0] + [m - 1 for m in markers] + [total_pages]
         segments = [(boundaries[i], boundaries[i + 1]) for i in range(len(boundaries) - 1)]
         segments = [(s, e) for s, e in segments if e > s]
 
@@ -452,8 +461,7 @@ def split_document(doc_id: str, split_markers: list[int], config: AktenfuxConfig
     )
     logger.info("Moved original %s → _SplittedDocs/%s", pdf_path.name, dest_pdf.name)
 
-    # Move the GUI overlay (.gui.json) alongside the original if it exists.
-    _GUI_OVERLAY_SUFFIX = ".gui.json"
+    # Move the GUI overlay alongside the original if it exists.
     overlay_src = pdf_path.parent / (pdf_path.stem + _GUI_OVERLAY_SUFFIX)
     if overlay_src.exists():
         overlay_dest = dest_pdf.parent / (dest_pdf.stem + _GUI_OVERLAY_SUFFIX)
