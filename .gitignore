@@ -28,8 +28,15 @@ htmlcov/
 
 # OS
 .DS_Store
+
+# GUI review overlay files (generated at runtime)
+*.gui.json
 Thumbs.db
 
 # Aktenfux runtime artefacts
 *.db
 *.db-journal
+
+# Node
+node_modules/
+webapp/node_modules/

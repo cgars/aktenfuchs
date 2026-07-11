@@ -1,0 +1,88 @@
+{
+  "id": "doc_2026_000124",
+  "source_file": "scan_002.pdf",
+  "pdf_path": "mock_data/pdfs/scan_002.pdf",
+  "pages": [
+    1,
+    2
+  ],
+  "status": "needs_split_review",
+  "split_markers": [
+    2
+  ],
+  "description": {
+    "summary": "Versicherungsschreiben mit zwei Abschnitten.",
+    "markdown": "# Versicherung\n\nEnth\u00e4lt Vertrags\u00e4nderung und Rechnung.",
+    "ocr_text": "Versicherung AG\nVertrags\u00e4nderung ...\nSeite 2 Rechnung ...",
+    "notes": "Pr\u00fcfen, ob Seite 2 getrennt abgelegt werden soll.",
+    "tasks": [
+      {
+        "label": "Split Entscheidung treffen",
+        "done": false
+      }
+    ]
+  },
+  "metadata": {
+    "document_type": {
+      "value": "Versicherung",
+      "state": "confirmed",
+      "confidence": 0.89
+    },
+    "date": {
+      "value": "2024-02-10",
+      "state": "confirmed",
+      "confidence": 0.94
+    },
+    "sender": {
+      "value": "Versicherung AG",
+      "state": "confirmed",
+      "confidence": 0.95
+    },
+    "recipient": {
+      "value": "Erika Muster",
+      "state": "suggested",
+      "confidence": 0.65
+    },
+    "subject": {
+      "value": "Vertrags\u00e4nderung",
+      "state": "suggested",
+      "confidence": 0.68
+    },
+    "reference": {
+      "value": "VS-88773",
+      "state": "suggested",
+      "confidence": 0.73
+    },
+    "amount": {
+      "value": "109.99",
+      "state": "suggested",
+      "confidence": 0.77
+    },
+    "deadline": {
+      "value": null,
+      "state": "empty",
+      "confidence": null
+    },
+    "location": {
+      "value": "",
+      "state": "empty",
+      "confidence": null
+    },
+    "persons": [
+      "Erika Muster"
+    ],
+    "organizations": [
+      "Versicherung AG"
+    ],
+    "tags": [
+      "versicherung"
+    ],
+    "confidentiality": "private",
+    "suggested_archive_path": "Versicherung/Policen/2024",
+    "status": "needs_split_review"
+  },
+  "review": {
+    "reviewed": false,
+    "reviewed_at": null
+  }
+}

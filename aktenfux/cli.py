@@ -364,6 +364,23 @@ def status(
 
 
 @app.command()
+def gui(
+    host: str = typer.Option("127.0.0.1", "--host", help="Host interface for GUI API server."),
+    port: int = typer.Option(8000, "--port", help="Port for GUI API server."),
+    reload: bool = typer.Option(False, "--reload", help="Enable auto-reload for development."),
+) -> None:
+    """Run the FastAPI backend for the Aktenfux review GUI MVP."""
+    try:
+        import uvicorn  # noqa: PLC0415
+    except ImportError as exc:  # pragma: no cover
+        err_console.print("[red]Missing dependency:[/red] uvicorn is required. Install via 'pip install -e .'.")
+        raise typer.Exit(1) from exc
+
+    console.print(f"[green]Starting GUI backend:[/green] http://{host}:{port}")
+    uvicorn.run("aktenfux.gui_api:app", host=host, port=port, reload=reload)
+
+
+@app.command()
 def reprocess(
     doc_id: str = typer.Argument(..., help="Document ID to re-analyze."),
     config_path: Optional[Path] = typer.Option(None, "--config", "-c"),

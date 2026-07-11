@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 _SIDECAR_SUFFIX = ".json"
 _MARKDOWN_SUFFIX = ".md"
+_GUI_OVERLAY_SUFFIX = ".gui.json"
 
 
 # ---------------------------------------------------------------------------
